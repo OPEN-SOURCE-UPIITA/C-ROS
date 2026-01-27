@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # Driver ROS 2 para MS200 / Oradar
 
@@ -100,3 +101,8 @@ ros2 run ms200_driver ms200_node --ros-args -p port:=/dev/ttyUSB1 -p baudrate:=1
 
 Este proyecto está bajo la Licencia **MIT**.
 >>>>>>> 86cd53c (Lanzamiento inicial: Driver completo MS200 desde cero)
+=======
+# C-ROS
+Repositorio oficial del proyecto C-ROS de la asociación Open Source de la escuela Unidad Profesional Interdisciplinaria en Ingeniería y Tecnologías Avanzadas.
+
+>>>>>>> 05fdc92 (Reorganizacion de carpetas para Lider)
