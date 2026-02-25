@@ -432,7 +432,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
             }
 
             // ================= CONTROL MOTORES DC =================
-            if (dir_dc == 1) {
+            if (dir_dc == 2) {
                 // ESTADO: ADELANTE
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);   // Prende LED PD9
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
@@ -442,7 +442,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
                 __HAL_TIM_SET_COMPARE(&htim9, TIM_CHANNEL_1, 0);
                 __HAL_TIM_SET_COMPARE(&htim9, TIM_CHANNEL_2, pwm_val);
             }
-            else if (dir_dc == 2) {
+            else if (dir_dc == 1) {
                 // ESTADO: REVERSA
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);  // Prende LED PD10
