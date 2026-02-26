@@ -1,0 +1,10 @@
+../Core/Src/main.c:72:6:Set_LED_Color	32	static
+../Core/Src/main.c:87:6:Monitor_Bateria_NoBloqueante	8	static
+../Core/Src/main.c:111:6:Control_Buzzer_NoBloqueante	16	static
+../Core/Src/main.c:137:5:main	8	static
+../Core/Src/main.c:188:6:SystemClock_Config	88	static
+../Core/Src/main.c:230:13:MX_ADC1_Init	24	static
+../Core/Src/main.c:282:13:MX_TIM3_Init	64	static
+../Core/Src/main.c:339:13:MX_DMA_Init	16	static
+../Core/Src/main.c:357:13:MX_GPIO_Init	40	static
+../Core/Src/main.c:392:6:Error_Handler	4	static,ignoring_inline_asm
