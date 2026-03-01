@@ -48,6 +48,7 @@ Para que el ESP32 se comunique con la red de ROS 2 en tu computadora principal (
 ```bash
 docker run -it --rm -v /dev:/dev --privileged --net=host microros/micro-ros-agent:humble serial --dev /dev/ttyUSB0 -b 115200
 (Asegúrate de cambiar /dev/ttyUSB0 por el puerto correcto de tu microcontrolador)
+´´´
 
 ## 3. Tópicos de ROS 2
 Una vez conectado, el nodo interactúa con los siguientes tópicos:
