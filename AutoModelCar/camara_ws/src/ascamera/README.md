@@ -73,7 +73,15 @@ cd ~/ROS/camara_ws
 colcon build --packages-select ascamera
 source install/setup.bash
 ```
+# Después de compilar, configura las librerías (solo necesario una vez)
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/ROS/camara_ws/install/ascamera/lib/' >> ~/.bashrc
+source ~/.bashrc
 
+# Para ejecutar la cámara HP60C (modelo detectado)
+ros2 launch ascamera hp60c.launch.py
+
+# Nota: El launch específico del modelo incluye parámetros adicionales
+# que evitan el error "stack smashing detected"
 ---
 
 # 🚀 Uso
