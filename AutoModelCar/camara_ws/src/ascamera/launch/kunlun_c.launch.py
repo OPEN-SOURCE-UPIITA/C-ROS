@@ -20,7 +20,7 @@ def generate_launch_description():
             {"fps": -1},
             {"usb_bus_no": -1},
             {"usb_path": "null"},
-            {"confiPath": "./ascamera/configurationfiles"},
+            {"confiPath": "/home/jon/ROS/camara_ws/configurationfiles"},
             {"color_pcl": False},
         ],
         remappings=[]

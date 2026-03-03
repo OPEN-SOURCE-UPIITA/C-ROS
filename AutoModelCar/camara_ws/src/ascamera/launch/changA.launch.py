@@ -5,7 +5,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     ascamera_node = Node(
-        namespace= "ascamera_kondyor",
+        namespace= "ascamera_nuwa",
         package='ascamera',
         executable='ascamera_node',
         respawn=True,
@@ -13,7 +13,7 @@ def generate_launch_description():
         parameters=[
             {"usb_bus_no": -1},
             {"usb_path": "null"},
-            {"confiPath": "./ascamera/configurationfiles"},
+            {"confiPath": "/home/jon/ROS/camara_ws/configurationfiles"},
             {"color_pcl": False},
         ],
         remappings=[]

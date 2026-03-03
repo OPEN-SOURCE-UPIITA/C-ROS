@@ -13,8 +13,11 @@ def generate_launch_description():
         parameters=[
             {"usb_bus_no": -1},
             {"usb_path": "null"},
-            {"confiPath": "./ascamera/configurationfiles"},
+            {"confiPath": "/home/jon/ROS/camara_ws/configurationfiles"}
             {"color_pcl": False},
+            # {"depth_width": 640},
+            # {"depth_height": 400},
+            # {"fps": 30},
         ],
         remappings=[]
     )
