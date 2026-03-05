@@ -1,6 +1,4 @@
-============================================================
-🏎️ AUTOMODELCAR - INFRAESTRUCTURA DE SIMULACIÓN (README.txt)
-============================================================
+SIMULACIÓN
 
 PROYECTO: Entorno de Simulación con Dirección Ackermann
 SISTEMA: ROS 2 Jazzy / Gazebo Sim (Harmonic)
