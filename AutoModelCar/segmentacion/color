@@ -1,0 +1,65 @@
+import cv2
+import numpy as np
+from cv2 import VideoCapture
+from scipy.spatial import distance as dist
+#from cv2 import waitkey
+dispositivo = cv2.VideoCapture(0)
+
+negro_bajo= np.array([0,0,0])
+negro_alto= np.array([180,255,50])
+
+blanco_bajo= np.array([0,0,200])
+blanco_alto= np.array([180,30,255])
+
+while True:
+    bien,frame = dispositivo.read() #lee dispositivo frame a frame
+    if bien==True: #si si leemos
+        #HSV: HUE=tono, Saturacion=Intensidad (gris a vibrante), Valor=iluminasion (de oscuro a brillante)
+        frameHSV=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV) #Pasamos a HSV (mayor control sobre iluminacion)
+                
+        maskNegro= cv2.inRange(frameHSV,negro_bajo,negro_alto)
+        maskBlanco=cv2.inRange(frameHSV,blanco_bajo,blanco_alto)
+        mascara=cv2.add(maskBlanco,maskNegro)
+        
+        cv2.imshow("mascara",mascara)
+        cv2.imshow("Frame",frame) #muestra lo que la camara ve
+        cv2.waitKey(1) #duerme el programa un milisegundo
+        blur=cv2.GaussianBlur(mascara,(5,5),0)#reduccion de ruido
+        
+        bordes=cv2.Canny(blur,100,200) #bordeado (revisar medidas)
+        bordes=cv2.dilate(bordes,None,iterations=1)#dismin ruido
+        bordes=cv2.erode(bordes,None, iterations=1)#dismin ruido
+        
+        contornos, _ =cv2.findContours(bordes.copy(),cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #contornos
+        #cv2.imshow("bordes",bordes) #muestra bordeado
+        #cv2.imshow("contornos",contornos) #contorneado
+        
+        #encontrar la distancia entre los bordes encontrados en este caso de los primeros encontrados
+        if len(contornos)>=2:
+            c1=contornos[0]
+            c2=contornos[1]
+        
+            M1=cv2.moments(c1) #calcular centros de los contornos
+            M2= cv2.moments(c2)
+            if M1["m10"] !=0 and M2 ["m00"] !=0:
+                cX1=int(M1["m10"]/ M1["m00"])
+                cY1=int(M1["m01"]/ M1["m00"])
+                
+                
+                cX2= int(M2["m10"]/ M2["m00"])
+                cY2= int(M2["m01"]/ M2["m00"])
+            
+                D=dist.euclidean((cX1,cY1),(cX2,cY2)) #calcular distancia
+            
+                cv2.line(frame,(cX1,cY1),(cX2,cY2),(255,0,0),2)#dibujar y mostrar
+                mitad=((cX1+ cX2)//2,(cY1+cY2)//2)
+            
+        cv2.imshow("distancia",frame)    
+            
+
+        
+        if cv2.waitKey(1) & 0xFF == ord('s'):
+            break
+
+dispositivo.release()
+cv2.destroyAllWindows()
