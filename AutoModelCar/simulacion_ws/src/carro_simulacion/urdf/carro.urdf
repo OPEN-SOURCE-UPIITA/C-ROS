@@ -34,6 +34,7 @@
     <axis xyz="0 0 1"/><limit lower="-0.6" upper="0.6" effort="100" velocity="1.0"/>
     <origin xyz="0.135 0.075 0" rpy="0 0 0"/>
   </joint>
+
   <link name="front_left_wheel">
     <visual><origin xyz="0 0 0" rpy="1.5708 0 0"/><geometry><cylinder length="0.026" radius="0.034"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0 0 0" rpy="1.5708 0 0"/><geometry><cylinder length="0.026" radius="0.034"/></geometry></collision>
@@ -52,6 +53,7 @@
     <axis xyz="0 0 1"/><limit lower="-0.6" upper="0.6" effort="100" velocity="1.0"/>
     <origin xyz="0.135 -0.075 0" rpy="0 0 0"/>
   </joint>
+
   <link name="front_right_wheel">
     <visual><origin xyz="0 0 0" rpy="1.5708 0 0"/><geometry><cylinder length="0.026" radius="0.034"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0 0 0" rpy="1.5708 0 0"/><geometry><cylinder length="0.026" radius="0.034"/></geometry></collision>
@@ -84,21 +86,25 @@
 
   <link name="lidar_link">
     <visual><geometry><cylinder radius="0.03" length="0.04"/></geometry><material name="blue"/></visual>
+    <inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial>
   </link>
   <joint name="lidar_joint" type="fixed">
-    <parent link="base_link"/><child link="lidar_link"/><origin xyz="-0.08 0 0.12" rpy="0 0 0"/>
+    <parent link="base_link"/><child link="lidar_link"/>
+    <origin xyz="-0.08 0 0.12" rpy="0 0 0"/>
   </joint>
 
   <link name="camera_link">
     <visual><geometry><box size="0.02 0.1 0.03"/></geometry><material name="black"/></visual>
   </link>
   <joint name="camera_joint" type="fixed">
-    <parent link="base_link"/><child link="camera_link"/><origin xyz="-0.02 0 0.11" rpy="0 0 0"/>
+    <parent link="base_link"/><child link="camera_link"/>
+    <origin xyz="-0.02 0 0.11" rpy="0 0 0"/>
   </joint>
 
   <link name="camera_link_optical"></link>
   <joint name="camera_optical_joint" type="fixed">
-    <parent link="camera_link"/><child link="camera_link_optical"/><origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+    <parent link="camera_link"/><child link="camera_link_optical"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
   </joint>
 
   <gazebo>
@@ -125,27 +131,32 @@
     </material>
   </gazebo>
 
-  <gazebo reference="front_left_wheel">
-    <mu1>0.9</mu1><mu2>0.9</mu2><material>Gazebo/Black</material>
-  </gazebo>
-  <gazebo reference="front_right_wheel">
-    <mu1>0.9</mu1><mu2>0.9</mu2><material>Gazebo/Black</material>
-  </gazebo>
-  <gazebo reference="rear_left_wheel">
-    <mu1>0.9</mu1><mu2>0.9</mu2><material>Gazebo/Black</material>
-  </gazebo>
-  <gazebo reference="rear_right_wheel">
-    <mu1>0.9</mu1><mu2>0.9</mu2><material>Gazebo/Black</material>
-  </gazebo>
+  <gazebo reference="front_left_wheel"><mu1>0.9</mu1><mu2>0.9</mu2><material>Gazebo/Black</material></gazebo>
+  <gazebo reference="front_right_wheel"><mu1>0.9</mu1><mu2>0.9</mu2><material>Gazebo/Black</material></gazebo>
+  <gazebo reference="rear_left_wheel"><mu1>0.9</mu1><mu2>0.9</mu2><material>Gazebo/Black</material></gazebo>
+  <gazebo reference="rear_right_wheel"><mu1>0.9</mu1><mu2>0.9</mu2><material>Gazebo/Black</material></gazebo>
 
   <gazebo reference="lidar_link">
     <sensor name="gpu_lidar" type="gpu_lidar">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>1</always_on>
+      <visualize>true</visualize>
       <update_rate>10</update_rate>
-      <topic>scan</topic>
       <lidar>
-        <scan><horizontal><samples>640</samples><resolution>1</resolution><min_angle>-3.14159</min_angle><max_angle>3.14159</max_angle></horizontal></scan>
-        <range><min>0.08</min><max>10.0</max></range>
+        <scan>
+          <horizontal>
+            <samples>640</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.12</min> <max>10.0</max>
+          <resolution>0.01</resolution>
+        </range>
       </lidar>
+      <topic>/model/carro/scan</topic> 
       <gz_frame_id>lidar_link</gz_frame_id>
     </sensor>
   </gazebo>
@@ -153,15 +164,16 @@
   <gazebo reference="camera_link">
     <sensor name="rgbd_camera" type="rgbd">
       <always_on>1</always_on>
-      <update_rate>30</update_rate> <visualize>true</visualize>
+      <update_rate>30</update_rate>
+      <visualize>true</visualize>
       <topic>camera</topic>
       <camera>
         <horizontal_fov>1.288</horizontal_fov> <image>
-          <width>640</width> <height>480</height>
+          <width>640</width>
+          <height>480</height>
           <format>R8G8B8</format>
         </image>
-        <clip>
-          <near>0.2</near> <far>4.0</far>  </clip>
+        <clip><near>0.2</near><far>4.0</far></clip>
       </camera>
       <gz_frame_id>camera_link_optical</gz_frame_id>
     </sensor>
