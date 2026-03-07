@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>carro_simulacion</name>
+  <version>0.0.0</version>
+  <description>Simulación pura de Gazebo para C-ROS</description>
+  <maintainer email="jason240208@gmail.com">Jonathan Jason Medina Martinez</maintainer>
+  <license>MIT</license>
+
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>ros_gz_sim</depend>
+  <depend>ros_gz_bridge</depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
