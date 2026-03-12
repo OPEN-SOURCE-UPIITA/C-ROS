@@ -17,9 +17,14 @@ class STM32Controller(Node):
         baudrate = self.get_parameter('baudrate').value
         timeout = self.get_parameter('timeout').value
         
+        # --- Variables de Movimiento ---
         self.dir_dc = 0
         self.speed_dc = 0
         self.dir_servo = 1500 
+        
+        # --- Variables de Luces ---
+        self.stop_lights = 0
+        self.turn_signals = 0
         
         # Variables para calcular la velocidad (Delta de Ticks)
         self.last_izq = 0
@@ -46,13 +51,17 @@ class STM32Controller(Node):
         self.timer_write = self.create_timer(0.05, self.timer_write_callback) # 20 Hz (Escritura)
         self.timer_read = self.create_timer(0.01, self.timer_read_callback)   # 100 Hz (Lectura rápida)
         
-        self.get_logger().info('Nodo Puente STM32 (Tx/Rx) Iniciado')
+        self.get_logger().info('Nodo Puente STM32 (Tx/Rx) con Control de Luces Iniciado')
     
     def command_callback(self, msg):
         self.last_command_time = time.time()
         self.dir_dc = msg.dir_dc
         self.speed_dc = msg.speed_dc
         self.dir_servo = msg.dir_servo
+        
+        # Atrapar las luces
+        self.stop_lights = msg.stop_lights
+        self.turn_signals = msg.turn_signals
     
     def send_command(self):
         servo_pwm = int(self.dir_servo)
@@ -62,14 +71,28 @@ class STM32Controller(Node):
         high_byte = (servo_pwm >> 8) & 0xFF
         low_byte = servo_pwm & 0xFF
 
-        packet = bytearray([0xAA, 0x55, 0x01, self.dir_dc, self.speed_dc, high_byte, low_byte, 0xFF])
+        # ======== EMPAQUETADO DEL BYTE DE LUCES ========
+        light_byte = 0
+        
+        if self.stop_lights == 1:
+            light_byte |= 4  # Suma 4 (Bandera de Freno)
+            
+        if self.turn_signals == 1:
+            light_byte |= 2  # Suma 2 (Derecha)
+        elif self.turn_signals == 2:
+            light_byte |= 1  # Suma 1 (Izquierda)
+        elif self.turn_signals == 3:
+            light_byte |= 3  # Suma 3 (Ambas/Intermitentes)
+
+        # La trama ahora usa light_byte en el índice 2
+        packet = bytearray([0xAA, 0x55, light_byte, self.dir_dc, self.speed_dc, high_byte, low_byte, 0xFF])
         try:
             self.ser.write(packet)
         except Exception as e:
             pass
             
     def timer_write_callback(self):
-        # Watchdog
+        # Watchdog: Detiene motores en caso de perder conexión con ROS, pero mantiene las luces
         if time.time() - self.last_command_time > self.watchdog_timeout:
             if self.dir_dc != 0 or self.speed_dc != 0 or self.dir_servo != 1500:
                 self.dir_dc = 0
@@ -80,15 +103,11 @@ class STM32Controller(Node):
     def timer_read_callback(self):
         """Olfatea el puerto serial en busca de los 7 bytes de telemetría"""
         try:
-            # Mientras haya suficientes bytes para armar un paquete
             while self.ser.in_waiting >= 7:
-                # Buscar la cabecera 0xAA
                 if self.ser.read(1)[0] == 0xAA:
-                    # Confirmar segunda cabecera 0x55
                     if self.ser.read(1)[0] == 0x55:
-                        # Leer los 4 bytes de datos + 1 byte de cola
                         data = self.ser.read(5) 
-                        if data[4] == 0xFF: # Trama perfecta
+                        if data[4] == 0xFF: 
                             current_izq = (data[0] << 8) | data[1]
                             current_der = (data[2] << 8) | data[3]
                             self.process_encoder_data(current_izq, current_der)
@@ -96,39 +115,30 @@ class STM32Controller(Node):
             pass
 
     def process_encoder_data(self, current_izq, current_der):
-        """Calcula la velocidad real superando el desbordamiento de 16-bits"""
-        # Calcular el cambio (Delta) de ticks desde la última lectura
         delta_izq = current_izq - self.last_izq
         delta_der = current_der - self.last_der
         
-        # Compensación por desbordamiento del Timer de 16 bits del STM32 (0 a 65535)
         if delta_izq > 32767: delta_izq -= 65536
         elif delta_izq < -32768: delta_izq += 65536
         
         if delta_der > 32767: delta_der -= 65536
         elif delta_der < -32768: delta_der += 65536
 
-        # Guardar para la siguiente iteración
         self.last_izq = current_izq
         self.last_der = current_der
 
-        # ======== LA MAGIA DEL ESPEJEADO ========
-        # Invertimos el delta del motor derecho por estar físicamente volteado
         delta_der = -delta_der 
 
-        # Crear y empaquetar el mensaje de ROS
         msg = EncoderData()
         
-        # Motor Izquierdo (M1)
         msg.vel_m1 = abs(delta_izq)
-        if delta_izq > 0: msg.dir_m1 = 1      # Adelante
-        elif delta_izq < 0: msg.dir_m1 = 2    # Atrás
+        if delta_izq > 0: msg.dir_m1 = 1      
+        elif delta_izq < 0: msg.dir_m1 = 2    
         else: msg.dir_m1 = 0
 
-        # Motor Derecho (M2)
         msg.vel_m2 = abs(delta_der)
-        if delta_der > 0: msg.dir_m2 = 1      # Adelante
-        elif delta_der < 0: msg.dir_m2 = 2    # Atrás
+        if delta_der > 0: msg.dir_m2 = 1      
+        elif delta_der < 0: msg.dir_m2 = 2    
         else: msg.dir_m2 = 0
 
         self.pub_encoder.publish(msg)
@@ -137,6 +147,8 @@ class STM32Controller(Node):
         self.dir_dc = 0
         self.speed_dc = 0
         self.dir_servo = 1500
+        self.stop_lights = 0
+        self.turn_signals = 0
         self.send_command()
         time.sleep(0.1)
         if hasattr(self, 'ser') and self.ser.is_open:
