@@ -6,3 +6,9 @@
 int8 dir_dc
 int8 speed_dc
 int16 dir_servo
+
+# Comando para Luces
+# stop_lights: 0=Apagado, 1=Encendido
+# turn_signals: 0=Apagado, 1=Derecha, 2=Izquierda, 3=Intermitentes (Ambas)
+int8 stop_lights
+int8 turn_signals
