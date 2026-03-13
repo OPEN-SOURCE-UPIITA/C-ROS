@@ -62,7 +62,10 @@ class STM32Controller(Node):
         high_byte = (servo_pwm >> 8) & 0xFF
         low_byte = servo_pwm & 0xFF
 
-        packet = bytearray([0xAA, 0x55, 0x01, self.dir_dc, self.speed_dc, high_byte, low_byte, 0xFF])
+        safe_dir = int(self.dir_dc) &0xFF
+        safe_speed  = int(self.speed_dc) & 0xFF
+
+        packet = bytearray([0xAA, 0x55, 0x01, safe_dir, safe_speed, high_byte, low_byte, 0xFF])
         try:
             self.ser.write(packet)
         except Exception as e:
