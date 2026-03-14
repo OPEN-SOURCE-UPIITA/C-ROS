@@ -31,7 +31,7 @@ class NodoMando(Node):
             comando.speed_dc = 0
 
         # 2. DIRECCIÓN ACKERMANN: STICK DERECHO
-        eje_direccion = msg.axes[3]
+        eje_direccion = msg.axes[2]
 
         servo_pwm = 1500 + int(eje_direccion * 300) 
         comando.dir_servo = max(1110, min(1740, servo_pwm))
