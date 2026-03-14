@@ -25,8 +25,8 @@ class NodoMando(Node):
         eje_potencia = msg.axes[1]
         
         # Nueva escala: 0 a 100
-        pwm_speed = int(abs(eje_potencia) * 100)
-        comando.speed_dc = max(0, min(100, pwm_speed)) 
+        pwm_speed = int(abs(eje_potencia) * 255)
+        comando.speed_dc = max(0, min(255, pwm_speed)) 
         
         if eje_potencia > 0.1: # Acelerando adelante
             comando.dir_dc = 1

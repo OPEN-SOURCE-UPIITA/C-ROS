@@ -89,6 +89,9 @@ class STM32Controller(Node):
             light_byte |= 1  # Suma 1 (Izquierda)
         elif self.turn_signals == 3:
             light_byte |= 3  # Suma 3 (Ambas/Intermitentes)
+        
+        if light_byte == 0:
+            light_byte = 1
 
         # La trama ahora usa light_byte en el índice 2
         packet = bytearray([0xAA, 0x55, light_byte, safe_dir, safe_dir, high_byte, low_byte, 0xFF])
