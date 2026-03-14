@@ -7,3 +7,5 @@ __pycache__/
 .idea/
 *.swp
 AutoModelCar/stm/micro_ros_setup
+AutoModelCar/ascamera/build
+
