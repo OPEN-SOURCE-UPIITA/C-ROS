@@ -91,7 +91,7 @@ class STM32Controller(Node):
             light_byte |= 3  # Suma 3 (Ambas/Intermitentes)
 
         # La trama ahora usa light_byte en el índice 2
-        packet = bytearray([0xAA, 0x55, light_byte, safe_dir, self.speed_dc, high_byte, low_byte, 0xFF])
+        packet = bytearray([0xAA, 0x55, light_byte, safe_dir, safe_dir, high_byte, low_byte, 0xFF])
 
         try:
             self.ser.write(packet)
