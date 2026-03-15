@@ -99,10 +99,17 @@ launch
 configurationfiles
   DESTINATION share/${PROJECT_NAME})
 
-install(FILES
-  libs/lib/aarch64-linux-gnu/libAngstrongCameraSdk.so
-  DESTINATION lib
-)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+  install(FILES
+    libs/lib/aarch64-linux-gnu/libAngstrongCameraSdk.so
+    DESTINATION lib
+  )
+else()
+  install(FILES
+    libs/lib/x86_64-linux-gnu/libAngstrongCameraSdk.so
+    DESTINATION lib
+  )
+endif()
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
