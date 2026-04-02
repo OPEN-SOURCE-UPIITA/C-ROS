@@ -4,10 +4,6 @@ PROYECTO: Entorno de Simulación con Dirección Ackermann
 SISTEMA: ROS 2 Jazzy / Gazebo Sim (Harmonic)
 EQUIPO: MSI Thin 15 B13VF / Chasis Aston Martin Green
 
-Este workspace es el núcleo de la infraestructura. Como Técnico 
-en Redes, considera este archivo como el manual de configuración 
-del "Host" de Gazebo.
-
 ------------------------------------------------------------
 1. COMPILACIÓN DEL WORKSPACE (BUILD)
 ------------------------------------------------------------
